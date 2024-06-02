@@ -30,7 +30,7 @@
 <body>
 <div class="form-container">
     <h2>Registration</h2>
-    <form action="/register" method="post">
+    <form action="/RegistrationForm" method="post">
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input" type="text" id="employee_id" name="employee_id">

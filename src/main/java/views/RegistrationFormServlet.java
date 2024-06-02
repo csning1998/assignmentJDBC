@@ -9,22 +9,34 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.sql.*;
-import java.util.Arrays;
 import java.util.Base64;
 
 @WebServlet(name = "RegistrationFormServlet", value = "/RegistrationFormServlet")
 public class RegistrationFormServlet extends HttpServlet {
 
-    private PreparedStatement prepareStatement;
+    private PreparedStatement sql;
 
     @Override
     public void init() {
         initializeJDBC();
+        try {
+            initializeKeyPair();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
     private static final int KEY_SIZE = 2048;
-    private KeyPair keyPair;
+    private static KeyPair keyPair;
+
+    private void initializeKeyPair() throws NoSuchAlgorithmException {
+        if (keyPair == null) {
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(KEY_SIZE);
+            keyPair = keyPairGenerator.generateKeyPair();
+        }
+    }
 
     public RegistrationFormServlet() throws NoSuchAlgorithmException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
@@ -67,10 +79,14 @@ public class RegistrationFormServlet extends HttpServlet {
             String hashedPWD = hashPassword(originalPWD);
             byte[] signature = signHash(hashedPWD.getBytes(StandardCharsets.UTF_8));
 
-            // Follow the correction instructions provided by Intellij IDEA.
-            saveRegistration(employeeEmail, employeeID, employeeName, originalPWD, Base64.getEncoder().encodeToString(signature));
+            // Follow the correction instructions given by Intellij IDEA.
+            saveRegistration(employeeEmail, employeeID, employeeName, hashedPWD, Base64.getEncoder().encodeToString(signature));
+            out.println("<!DOCTYPE html>");
+            out.println("<html><head><title>Registration Form</title></head><body>");
+            out.println("<h1>Registration Successful</h1>");
+            out.println("</body></html>");
 
-        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException err){
+        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | SQLException err){
             err.printStackTrace();
             out.println("<html><body>");
             out.println("<h3> (500) Unexpected error occurred</h3>");
@@ -99,8 +115,8 @@ public class RegistrationFormServlet extends HttpServlet {
                     "jdbc:postgresql://db:5432/postgres", "postgres", "postgres");
             System.out.println("Database connected...");
 
-            prepareStatement = conn.prepareStatement(
-                    "insert into users (employee_email, employee_name, employee_id, originalPWD, signature) values (?, ?, ?, ?, ?);");
+            sql = conn.prepareStatement(
+                    "insert into users (employee_email, employee_name, employee_id, hashedPWD, signature) values (?, ?, ?, ?, ?);");
 
         } catch (ClassNotFoundException | SQLException err) {
             err.printStackTrace();
@@ -108,17 +124,18 @@ public class RegistrationFormServlet extends HttpServlet {
         }
     }
 
-    private void saveRegistration(String employeeID, String employeeEmail, String employeeName, String originalPWD, String signature){
+    private void saveRegistration(String employeeID, String employeeEmail, String employeeName, String hashedPWD, String signature) throws SQLException {
         try {
-            prepareStatement.setString(1, employeeID);
-            prepareStatement.setString(2, employeeName);
-            prepareStatement.setString(3, employeeEmail);
-            prepareStatement.setString(4, originalPWD);
-            prepareStatement.setString(5, signature);
+            sql.setString(1, employeeID);
+            sql.setString(2, employeeName);
+            sql.setString(3, employeeEmail);
+            sql.setString(4, hashedPWD);
+            sql.setString(5, signature);
             // Base64 是用來避免密碼在轉換過程中變成亂碼
-            prepareStatement.executeUpdate();
+            sql.executeUpdate();
         } catch (SQLException err) {
-        err.printStackTrace();
+             err.printStackTrace();
+             throw err;
         }
     }
 }

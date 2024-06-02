@@ -3,6 +3,7 @@ package views;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +15,18 @@ public class LoginFormServlet extends HttpServlet {
 
     private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
     private static final int KEY_SIZE = 2048; // Use a stronger key size
-    private KeyPair keyPair;
+    private static KeyPair keyPair;
+
+    static {
+        try {
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(KEY_SIZE);
+            keyPair = keyPairGenerator.generateKeyPair();
+        } catch (NoSuchAlgorithmException e) {
+            // 處理異常，例如紀錄錯誤日誌
+            e.printStackTrace();
+        }
+    }
 
     public LoginFormServlet() throws NoSuchAlgorithmException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
@@ -46,12 +58,13 @@ public class LoginFormServlet extends HttpServlet {
         // Bring 'PrintWriter' out of scope of try catch as a global var of try-catch.
         PrintWriter out = null;
         try {
-            String hashedPWD = hashPassword(originalPWD);
-            byte[] signature = signHash(hashedPWD.getBytes(StandardCharsets.UTF_8)); // Sign the hash
             boolean isLoginSuccessful = checkLogin(employeeID, originalPWD);
 
             if (isLoginSuccessful) {
                 // 登入成功，重定向到 Form.jsp
+                HttpSession session = req.getSession();
+                session.setAttribute("employeeID", employeeID);
+                session.setMaxInactiveInterval(360 * 60); // 360 minutes
                 res.sendRedirect("/Form.jsp");
             } else {
                 // 登入失敗，輸出錯誤訊息
@@ -73,15 +86,12 @@ public class LoginFormServlet extends HttpServlet {
 //            out.println("<p>Signature: " + Base64.getEncoder().encodeToString(signature) + "</p>");
 //            out.println("</body></html>");
 
-        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
-            e.printStackTrace(out);
-            out = res.getWriter();
+        } catch (SQLException | ClassNotFoundException e) {
             out.println("<!DOCTYPE html>");
             out.println("<html><head><title>Login Failed</title></head><body>");
             out.println("<h1>An error occurred during login</h1>");
             out.println("</body></html>");
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace(out);
         }
     }
 
@@ -98,9 +108,10 @@ public class LoginFormServlet extends HttpServlet {
             System.out.println("Database connected...");
 
             PreparedStatement sql = conn.prepareStatement(
-                    "SELECT * FROM users WHERE employee_id = ? and originalPWD = ?");
+                    "SELECT * FROM users WHERE employee_id = ? and hashedPWD  = ?");
             sql.setString(1, employeeID);
-            sql.setString(2, originalPWD);
+            String hashedPWD = hashPassword(originalPWD);
+            sql.setString(2, hashedPWD);
 
             ResultSet result = sql.executeQuery();
 
@@ -112,7 +123,7 @@ public class LoginFormServlet extends HttpServlet {
                 System.out.println("Login Check: " + isLoginSuccessful);
             }
             conn.close();
-        } catch (ClassNotFoundException | SQLException err){
+        } catch (ClassNotFoundException | SQLException | NoSuchAlgorithmException err){
             System.out.println(err);
         }
         return isLoginSuccessful;

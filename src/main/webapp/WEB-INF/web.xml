@@ -40,7 +40,7 @@
 
     <servlet-mapping>
         <servlet-name>RegistrationServlet</servlet-name>
-        <url-pattern>/register</url-pattern>
+        <url-pattern>/RegistrationForm</url-pattern>
     </servlet-mapping>
 
 </web-app>
