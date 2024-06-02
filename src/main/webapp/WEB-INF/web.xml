@@ -26,16 +26,16 @@
     <servlet>
         <servlet-name>LoginFormServlet</servlet-name>
         <servlet-class>views.LoginFormServlet</servlet-class>
-    </servlet>>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>LoginFormServlet</servlet-name>
         <url-pattern>/LoginForm</url-pattern>
-    </servlet-mapping>>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>RegistrationServlet</servlet-name>
-        <servlet-class>views.RegistrationServlet</servlet-class>
+        <servlet-class>views.RegistrationFormServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>

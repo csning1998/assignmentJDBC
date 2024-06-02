@@ -37,7 +37,7 @@ public class LoginFormServlet extends HttpServlet {
         return signature.sign();
     }
 
-    public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
         res.setContentType("text/html; charset=UTF-8");
 
         String studentID = req.getParameter("employee_id");

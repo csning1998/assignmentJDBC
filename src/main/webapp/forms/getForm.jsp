@@ -26,7 +26,7 @@
 <body>
 <div class="form-container">
     <h2>Course Information</h2>
-    <form action="/form-get" method="get">
+    <form action="http://localhost:8081/form-get" method="get">
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input" type="text" id="courseName" name="courseName">
             <label class="mdl-textfield__label" for="courseName">Course Name</label>
