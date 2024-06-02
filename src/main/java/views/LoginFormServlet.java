@@ -48,53 +48,73 @@ public class LoginFormServlet extends HttpServlet {
         try {
             String hashedPWD = hashPassword(originalPWD);
             byte[] signature = signHash(hashedPWD.getBytes(StandardCharsets.UTF_8)); // Sign the hash
-            Boolean isLoginSucessful = checkLogin(employeeID, originalPWD);
+            boolean isLoginSuccessful = checkLogin(employeeID, originalPWD);
 
-            out = res.getWriter();
-            out.println("<!DOCTYPE html>");
-            out.println("<html><head><title>Login Form</title></head><body>");
-            out.println("<h1>Login Form</h1>");
-            out.println("<p>employee_id: " + employeeID + "</p>");
-            out.println("<p>originalPWD: " + originalPWD + "</p>");
-            out.println("<p>Hashed Password: " + hashedPWD + "</p>");
-            out.println("<p>Signature: " + Base64.getEncoder().encodeToString(signature) + "</p>");
-            out.println("</body></html>");
+            if (isLoginSuccessful) {
+                // 登入成功，重定向到 Form.jsp
+                res.sendRedirect("/Form.jsp");
+            } else {
+                // 登入失敗，輸出錯誤訊息
+                out = res.getWriter();
+                out.println("<!DOCTYPE html>");
+                out.println("<html><head><title>Login Failed</title></head><body>");
+                out.println("<h1>Login Failed!</h1>");
+                out.println("<p>Invalid employee ID or password.</p>");
+                out.println("</body></html>");
+            }
+
+//            out = res.getWriter();
+//            out.println("<!DOCTYPE html>");
+//            out.println("<html><head><title>Login Form</title></head><body>");
+//            out.println("<h1>Login Form</h1>");
+//            out.println("<p>employee_id: " + employeeID + "</p>");
+//            out.println("<p>originalPWD: " + originalPWD + "</p>");
+//            out.println("<p>Hashed Password: " + hashedPWD + "</p>");
+//            out.println("<p>Signature: " + Base64.getEncoder().encodeToString(signature) + "</p>");
+//            out.println("</body></html>");
 
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
             e.printStackTrace(out);
-            System.out.println("Error");
+            out = res.getWriter();
+            out.println("<!DOCTYPE html>");
+            out.println("<html><head><title>Login Failed</title></head><body>");
+            out.println("<h1>An error occurred during login</h1>");
+            out.println("</body></html>");
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @SuppressWarnings("ThrowablePrintedToSystemOut")
     public Boolean checkLogin(String employeeID, String originalPWD) throws SQLException, ClassNotFoundException {
 
-        Boolean isLoginSuccessful = false;
-        Class.forName("org.postgresql.Driver");
-        Connection conn = DriverManager.getConnection(
-                "jdbc:postgresql://db:5432/postgres", "postgres", "postgres");
-        System.out.println("Database connected...");
+        boolean isLoginSuccessful = false;
 
-        String sql = "SELECT * FROM users WHERE employee_id = ? and originalPWD = ?";
-        PreparedStatement statement = conn.prepareStatement(sql);
-        statement.setString(1, employeeID);
-        statement.setString(2, originalPWD);
+        try {
+            Class.forName("org.postgresql.Driver");
+            System.out.println("Driver loaded...");
+            Connection conn = DriverManager.getConnection(
+                    "jdbc:postgresql://db:5432/postgres", "postgres", "postgres");
+            System.out.println("Database connected...");
 
-        ResultSet result = statement.executeQuery();
+            PreparedStatement sql = conn.prepareStatement(
+                    "SELECT * FROM users WHERE employee_id = ? and originalPWD = ?");
+            sql.setString(1, employeeID);
+            sql.setString(2, originalPWD);
 
-        System.out.println("Result: " + result.toString());
-        System.out.println("Login Check: " + isLoginSuccessful.toString());
+            ResultSet result = sql.executeQuery();
 
-        if (result.next()) {
-//            user.setFullname(result.getString("originalPWD"));
-            isLoginSuccessful = true;
-            System.out.println("Login Check: " + isLoginSuccessful.toString());
+            System.out.println("Result: " + result.toString());
+
+            if (result.next()) {
+                // user.setFullname(result.getString("originalPWD"));
+                isLoginSuccessful = true;
+                System.out.println("Login Check: " + isLoginSuccessful);
+            }
+            conn.close();
+        } catch (ClassNotFoundException | SQLException err){
+            System.out.println(err);
         }
-        conn.close();
-
         return isLoginSuccessful;
     }
-
-
 }
