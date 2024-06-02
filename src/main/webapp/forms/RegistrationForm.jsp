@@ -33,13 +33,18 @@
     <form action="register" method="post">
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="studentID" name="studentID">
-            <label class="mdl-textfield__label" for="studentID">Your student ID number: </label>
+            <input class="mdl-textfield__input" type="text" id="useremail" name="useremail">
+            <label class="mdl-textfield__label" for="useremail">Enter your username / Email: </label>
         </div>
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="password" id="password" name="password">
-            <label class="mdl-textfield__label" for="password">Password</label>
+            <input class="mdl-textfield__input" type="password" id="originalPWD" name="originalPWD">
+            <label class="mdl-textfield__label" for="originalPWD">Password</label>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="password" id="confirmPWD" name="confirmPWD">
+            <label class="mdl-textfield__label" for="confirmPWD">Retype your password again</label>
         </div>
 
         <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">

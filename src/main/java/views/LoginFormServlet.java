@@ -37,8 +37,6 @@ public class LoginFormServlet extends HttpServlet {
         return signature.sign();
     }
 
-    // (Optional) Add a verifySignature method if you need to verify the signature later
-
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         res.setContentType("text/html; charset=UTF-8");
 
