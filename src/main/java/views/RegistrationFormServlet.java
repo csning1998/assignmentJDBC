@@ -96,7 +96,7 @@ public class RegistrationFormServlet extends HttpServlet {
             System.out.println("Driver loaded...");
 
             Connection conn = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5433/javadb", "postgres", "postgres");
+                    "jdbc:postgresql://db:5432/postgres", "postgres", "postgres");
             System.out.println("Database connected...");
 
             prepareStatement = conn.prepareStatement(
