@@ -6,6 +6,7 @@
 //import javax.servlet.http.HttpServletRequest;
 //import javax.servlet.http.HttpServletResponse;
 //import java.io.IOException;
+//import java.io.PrintWriter;
 //import java.nio.charset.StandardCharsets;
 //import java.security.*;
 //import java.sql.*;
@@ -15,6 +16,46 @@
 //
 //@WebServlet("/register")
 //public class RegistrationFormServlet extends HttpServlet {
+//
+//    public void init() throws ServletException {
+//        initializeJDBC();
+//    }
+//
+//    @Override
+//    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        response.setContentType("text/html;charset=UTF-8");
+//
+//        String employeeId = request.getParameter("employee_id");
+//        String employeeName = request.getParameter("employee_name");
+//        String password = request.getParameter("originalPWD");
+//        String confirmPassword = request.getParameter("confirmPWD");
+//
+//        PrintWriter out = response.getWriter();
+//        out.println("<html><head></head><body>");
+//        out.println("<h3> Your 身份證 / ARC ID: " + employeeId + "</h3>");
+//        out.println("<h3> Your name: " + employeeName + "</h3>");
+//        out.println("<h3> Your password: " + password + "</h3>");
+//        out.println("<h3> Your Confirm password: " + confirmPassword + "</h3>");
+//    }
+//
+//    private void initializeJDBC() {
+//        try {
+//            Class.forName("org.postgresql.Driver");
+//            System.out.println("Driver loaded...");
+//
+//            Connection conn = DriverManager.getConnection(
+//                    "jdbc:postgresql://localhost:5433/postgres",
+//                    "postgres",
+//                    "postgres");
+//            System.out.println("Database connected...");
+//
+//            preparedStatement = conn.prepareStatement(
+//                    "insert into course (employee_id, employee_name, courseTeacher) values (?, ?, ?);");
+//        } catch (ClassNotFoundException | SQLException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException(e);
+//        }
+//    }
 //
 //    private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
 //    private static final int KEY_SIZE = 2048;
@@ -31,7 +72,6 @@
 //        byte[] hashedBytes = digest.digest(password.getBytes(StandardCharsets.UTF_8));
 //        return Base64.getEncoder().encodeToString(hashedBytes);
 //    }
-//
 //    private byte[] signHash(byte[] hashedPassword) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 //        Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
 //        signature.initSign(keyPair.getPrivate());
@@ -39,50 +79,23 @@
 //        return signature.sign();
 //    }
 //
-//    private void initialiseJDBC throws ServletException(){
-//        try{
-//            Class.forName("org.postgresql.Driver");
-//            System.out.println("Driver loaded...");
-//
-//            Connection
-//
-//        } catch(){
-//
+//    private void saveRegistration(String employeeID, String password, String ){
+//        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//            pstmt.setString(1, employeeName);
+//            pstmt.setString(2, employeeId);
+//            pstmt.setString(3, hashedPWD);
+//            pstmt.setBytes(4, signature);
+//            // Base64 是用來避免密碼在轉換過程中變成亂碼
+//            pstmt.executeUpdate();
 //        }
+//
+//        response.getWriter().println("Registration successful!");
+//
+//    } catch (SQLException | NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
+//        e.printStackTrace(response.getWriter());
+//    }
 //    }
 //
-//    @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        response.setContentType("text/html;charset=UTF-8");
 //
-//        String employeeId = request.getParameter("employee_id");
-//        String employeeName = request.getParameter("employee_name");
-//        String password = request.getParameter("originalPWD");
-//        String confirmPassword = request.getParameter("confirmPWD");
 //
-//        // 簡單的密碼確認
-//        if (!password.equals(confirmPassword)) {
-//            response.getWriter().println("Passwords do not match!");
-//            return;
-//        }
-//
-//        try (Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5433/javadb", "postgres", "postgres")) {
-//            String hashedPWD = hashPassword(password);
-//            byte[] signature = signHash(hashedPWD.getBytes(StandardCharsets.UTF_8));
-//
-//            String sql = "INSERT INTO users (employee_id, employee_name, hashedPWD, signature) VALUES (1, 2, 3, 4)";
-//            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//                pstmt.setString(1, employeeId);
-//                pstmt.setString(2, employeeName);
-//                pstmt.setString(3, hashedPWD);
-//                pstmt.setString(4, Base64.getEncoder().encodeToString(signature));
-//                pstmt.executeUpdate();
-//            }
-//
-//            response.getWriter().println("Registration successful!");
-//
-//        } catch (SQLException | NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
-//            e.printStackTrace(response.getWriter());
-//        }
-//    }
 //}

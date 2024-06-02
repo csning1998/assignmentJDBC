@@ -1,11 +1,12 @@
+# see README.txt for info
+
 version: '3.8'
-
 services:
-
+  
   db:
     image: postgres:13
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - ./postgres-data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
@@ -14,20 +15,24 @@ services:
       - "5433:5432"
     restart: unless-stopped
 
-  web-server:
-    image: php:7.4-apache
+  tomcat-10-0-11-jdk17:
+    image: tomcat:10.0-jdk17
+    ports:
+      #     expose tomcat port 8080(container) on host as port 8888(host)
+      - "8888:8080"
+      #     expose java debugging port 5005 on host as port 5005  (HOST:CONTAINER)
+      - "5005:5005"
+    command: "catalina.sh run"
+    volumes:
+      #     "host path to the directory with .war file" / "container tomcat directory with webapps"
+      - "./target:/usr/local/tomcat/webapps"
+    environment:
+      JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+  #      JAVA_OPTS: "JAVA_OPTS -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+  nginx-proxy:
+    image: jwilder/nginx-proxy
     ports:
       - "8081:80"
     volumes:
-      - "C:/Users/janua/Git/FHIR_Rebuild/web:/var/www/html"
-    restart: unless-stopped
-
-volumes:
-  postgres-data:
-
-networks:
-  athena_network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx/dev.conf:/etc/nginx/conf.d/dev.conf

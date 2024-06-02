@@ -30,7 +30,7 @@
 <body>
 <div class="form-container">
     <h2>Registration</h2>
-    <form action="register" method="post">
+    <form action="forms/register" method="post">
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input" type="text" id="useremail" name="useremail">
@@ -45,6 +45,16 @@
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input" type="password" id="confirmPWD" name="confirmPWD">
             <label class="mdl-textfield__label" for="confirmPWD">Retype your password again</label>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="employee_name" name="employee_name">
+            <label class="mdl-textfield__label" for="employee_name">Enter your name: </label>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="password" id="employee_id" name="employee_id">
+            <label class="mdl-textfield__label" for="employee_id">Enter your 身份證 ID / ARC Number</label>
         </div>
 
         <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">

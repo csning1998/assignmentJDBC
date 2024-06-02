@@ -26,7 +26,7 @@
 <body>
     <div class="form-container">
         <h2>Login Form</h2>
-        <form action="http://localhost:8082/LoginForm" method="post">
+        <form action="views/LoginForm" method="post">
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input class="mdl-textfield__input" type="text" id="employee_id" name="employee_id">
                 <label class="mdl-textfield__label" for="employee_id">Your employee ID number: </label>
