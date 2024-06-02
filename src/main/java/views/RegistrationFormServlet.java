@@ -68,7 +68,7 @@ public class RegistrationFormServlet extends HttpServlet {
             byte[] signature = signHash(hashedPWD.getBytes(StandardCharsets.UTF_8));
 
             // Follow the correction instructions provided by Intellij IDEA.
-            saveRegistration(employeeEmail, employeeID, employeeName, hashedPWD.getBytes(), Base64.getEncoder().encodeToString(signature));
+            saveRegistration(employeeEmail, employeeID, employeeName, originalPWD, Base64.getEncoder().encodeToString(signature));
 
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException err){
             err.printStackTrace();
@@ -100,7 +100,7 @@ public class RegistrationFormServlet extends HttpServlet {
             System.out.println("Database connected...");
 
             prepareStatement = conn.prepareStatement(
-                    "insert into users (employee_email, employee_name, employee_id, hashedPWD, signature) values (?, ?, ?, ?, ?);");
+                    "insert into users (employee_email, employee_name, employee_id, originalPWD, signature) values (?, ?, ?, ?, ?);");
 
         } catch (ClassNotFoundException | SQLException err) {
             err.printStackTrace();
@@ -108,12 +108,12 @@ public class RegistrationFormServlet extends HttpServlet {
         }
     }
 
-    private void saveRegistration(String employeeID, String employee_email, String employeeName, byte[] hashedPWD, String signature){
+    private void saveRegistration(String employeeID, String employeeEmail, String employeeName, String originalPWD, String signature){
         try {
-            prepareStatement.setString(1, employee_email);
+            prepareStatement.setString(1, employeeID);
             prepareStatement.setString(2, employeeName);
-            prepareStatement.setString(3, employeeID);
-            prepareStatement.setBytes(4, hashedPWD);
+            prepareStatement.setString(3, employeeEmail);
+            prepareStatement.setString(4, originalPWD);
             prepareStatement.setString(5, signature);
             // Base64 是用來避免密碼在轉換過程中變成亂碼
             prepareStatement.executeUpdate();

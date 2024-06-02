@@ -26,7 +26,7 @@
 <body>
     <div class="form-container">
         <h2>Login Form</h2>
-        <form action="views/LoginForm" method="post">
+        <form action="/LoginForm" method="post">
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input class="mdl-textfield__input" type="text" id="employee_id" name="employee_id">
                 <label class="mdl-textfield__label" for="employee_id">Your employee ID number: </label>
@@ -39,9 +39,11 @@
             <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
                 <i class="material-icons">lock_open</i> Login
             </button>
-            <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-                <i class="material-icons">lock_open</i> Register
-            </button>
+            <a href="/forms/RegistrationForm.jsp">
+                <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                     <i class="material-icons">lock_open</i> Register
+                </button>
+            </a>
         </form>
     </div>
 </body>

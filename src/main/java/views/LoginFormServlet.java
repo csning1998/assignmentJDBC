@@ -1,6 +1,5 @@
 package views;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -8,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
+import java.sql.*;
 import java.util.Base64;
 
 public class LoginFormServlet extends HttpServlet {
@@ -40,7 +40,7 @@ public class LoginFormServlet extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
         res.setContentType("text/html; charset=UTF-8");
 
-        String studentID = req.getParameter("employee_id");
+        String employeeID = req.getParameter("employee_id");
         String originalPWD = req.getParameter("originalPWD");
 
         // Bring 'PrintWriter' out of scope of try catch as a global var of try-catch.
@@ -48,14 +48,13 @@ public class LoginFormServlet extends HttpServlet {
         try {
             String hashedPWD = hashPassword(originalPWD);
             byte[] signature = signHash(hashedPWD.getBytes(StandardCharsets.UTF_8)); // Sign the hash
-
-            // Now you can store the studentID, hashedPWD, and signature in your database
+            Boolean isLoginSucessful = checkLogin(employeeID, originalPWD);
 
             out = res.getWriter();
             out.println("<!DOCTYPE html>");
             out.println("<html><head><title>Login Form</title></head><body>");
             out.println("<h1>Login Form</h1>");
-            out.println("<p>employee_id: " + studentID + "</p>");
+            out.println("<p>employee_id: " + employeeID + "</p>");
             out.println("<p>originalPWD: " + originalPWD + "</p>");
             out.println("<p>Hashed Password: " + hashedPWD + "</p>");
             out.println("<p>Signature: " + Base64.getEncoder().encodeToString(signature) + "</p>");
@@ -64,6 +63,38 @@ public class LoginFormServlet extends HttpServlet {
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
             e.printStackTrace(out);
             System.out.println("Error");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
+
+    public Boolean checkLogin(String employeeID, String originalPWD) throws SQLException, ClassNotFoundException {
+
+        Boolean isLoginSuccessful = false;
+        Class.forName("org.postgresql.Driver");
+        Connection conn = DriverManager.getConnection(
+                "jdbc:postgresql://db:5432/postgres", "postgres", "postgres");
+        System.out.println("Database connected...");
+
+        String sql = "SELECT * FROM users WHERE employee_id = ? and originalPWD = ?";
+        PreparedStatement statement = conn.prepareStatement(sql);
+        statement.setString(1, employeeID);
+        statement.setString(2, originalPWD);
+
+        ResultSet result = statement.executeQuery();
+
+        System.out.println("Result: " + result.toString());
+        System.out.println("Login Check: " + isLoginSuccessful.toString());
+
+        if (result.next()) {
+//            user.setFullname(result.getString("originalPWD"));
+            isLoginSuccessful = true;
+            System.out.println("Login Check: " + isLoginSuccessful.toString());
+        }
+        conn.close();
+
+        return isLoginSuccessful;
+    }
+
+
 }

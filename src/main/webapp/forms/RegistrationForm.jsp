@@ -60,6 +60,11 @@
         <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
             <i class="material-icons">person_add</i> Register
         </button>
+        <a href="/forms/LoginForm.jsp">
+            <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                <i class="material-icons">lock_open</i> Back to Login
+            </button>
+        </a>
     </form>
 </div>
 </body>
