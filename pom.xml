@@ -36,6 +36,12 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <!-- Update to 42.7.3 for a critical fix preventing SQL injection.-->
+            <version>42.7.3</version>
+        </dependency>
     </dependencies>
 
     <build>

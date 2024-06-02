@@ -5,11 +5,42 @@
          version="4.0">
     <servlet>
         <servlet-name> TestServlet </servlet-name>
-        <servlet-class> views.TestServlet </servlet-class>
+        <servlet-class>views.GetFormServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
         <servlet-name> TestServlet </servlet-name>
         <url-pattern> /tryme </url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GetFormServlet</servlet-name>
+        <servlet-class>views.GetFormServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>GetFormServlet</servlet-name>
+        <url-pattern>/form-get</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LoginFormServlet</servlet-name>
+        <servlet-class>views.LoginFormServlet</servlet-class>
+    </servlet>>
+
+    <servlet-mapping>
+        <servlet-name>LoginFormServlet</servlet-name>
+        <url-pattern>/LoginForm</url-pattern>
+    </servlet-mapping>>
+
+    <servlet>
+        <servlet-name>RegistrationServlet</servlet-name>
+        <servlet-class>views.RegistrationServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>RegistrationServlet</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+
 </web-app>
