@@ -15,8 +15,8 @@ services:
       - "5433:5432"
     restart: unless-stopped
 
-  tomcat-10-0-11-jdk17:
-    image: tomcat:10.0-jdk17
+  tomcat:
+    image: tomcat:9.0.89-jdk17
     ports:
       #     expose tomcat port 8080(container) on host as port 8888(host)
       - "8888:8080"
