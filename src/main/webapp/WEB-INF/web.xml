@@ -68,4 +68,15 @@
         <url-pattern>/PatientForm</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>PatientSummaryServlet</servlet-name>
+        <servlet-class>views.PatientFormServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>PatientSummaryServlet</servlet-name>
+        <url-pattern>/PatientSummary</url-pattern>
+    </servlet-mapping>
+
+
 </web-app>

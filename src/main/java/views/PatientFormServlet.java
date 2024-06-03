@@ -4,6 +4,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -14,11 +15,20 @@ import java.sql.SQLException;
 @WebServlet(name = "PatientFormServlet", value = "/PatientFormServlet")
 public class PatientFormServlet extends HttpServlet {
 
+    @Override
+    public void init() {
+        try {
+            initializeJDBC();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace(); // 印出錯誤訊息
+        }
+    }
     private PreparedStatement sql;
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
         res.setContentType("text/html; charset=UTF-8");
+        HttpSession session = req.getSession();
 
         String patientName = req.getParameter("patientName");
         String patientIdentifier = req.getParameter("patientIdentifier");
@@ -32,6 +42,8 @@ public class PatientFormServlet extends HttpServlet {
         String personalHistory = req.getParameter("personalHistory");
         String familyHistory = req.getParameter("familyHistory");
         String medicalRecord = req.getParameter("medicalRecord");
+
+        session.setAttribute("patientName", patientName);
 
         PrintWriter out = res.getWriter();
 
@@ -55,11 +67,25 @@ public class PatientFormServlet extends HttpServlet {
                     phoneNumber, patientAddress, patientHeight, patientWeight,
                     firstVisitDate, personalHistory, familyHistory, medicalRecord);
 
+            // Store patient data in request attributes
+            req.setAttribute("patientName", patientName);
+            req.setAttribute("patientIdentifier", patientIdentifier);
+            req.setAttribute("patientBirthdate", patientBirthdate);
+            req.setAttribute("patientGender", patientGender);
+            req.setAttribute("phoneNumber", phoneNumber);
+            req.setAttribute("patientAddress", patientAddress);
+            req.setAttribute("patientHeight", patientHeight);
+            req.setAttribute("patientWeight", patientWeight);
+            req.setAttribute("firstVisitDate", firstVisitDate);
+            req.setAttribute("personalHistory", personalHistory);
+            req.setAttribute("familyHistory", familyHistory);
+            req.setAttribute("medicalRecord", medicalRecord);
+
             // redirect to PatientSummary.jsp
-            res.sendRedirect(req.getContextPath() + "/forms/PatientSummary.jsp");
+            req.getRequestDispatcher("/forms/PatientSummary.jsp").forward(req, res);
 
         } catch (Exception e) {
-            out.println("<html><body><p>資料插入失敗：" + e.getMessage() + "</p></body></html>");
+            out.println("<html><body><p>(500) Failed to insert data：" + e.getMessage() + "</p></body></html>");
         }
     }
 
