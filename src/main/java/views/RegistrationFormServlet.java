@@ -80,13 +80,32 @@ public class RegistrationFormServlet extends HttpServlet {
             byte[] signature = signHash(hashedPWD.getBytes(StandardCharsets.UTF_8));
 
             // Follow the correction instructions given by Intellij IDEA.
-            saveRegistration(employeeEmail, employeeID, employeeName, hashedPWD, Base64.getEncoder().encodeToString(signature));
-            out.println("<!DOCTYPE html>");
-            out.println("<html><head><title>Registration Form</title></head><body>");
-            out.println("<h1>Registration Successful</h1>");
-            out.println("</body></html>");
+            if (!checkRegistration(employeeID, employeeEmail)) {
+                // Not Registered.
+                saveRegistration(employeeID, employeeEmail, employeeName, hashedPWD, Base64.getEncoder().encodeToString(signature));
 
-        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | SQLException err){
+                // JavaScript Console.log
+                out.println("<script>");
+                out.println("window.onload = function() {");
+                out.println("    alert('Registration Successful');");
+                out.println("    setTimeout(function() {");
+                out.println("        window.location.href = '/forms/LoginForm.jsp';");
+                out.println("    }, 1000); // 1000 milliseconds = 0.5 second");
+                out.println("}");
+                out.println("</script>");
+                } else {
+                out.println("<script>");
+                out.println("window.onload = function() {");
+                out.println("    alert('This Account has been registered before.');");
+                out.println("    setTimeout(function() {");
+                out.println("        window.location.href = '/forms/RegistrationForm.jsp';");
+                out.println("    }, 1000); // 1000 milliseconds = 1 second");
+                out.println("}");
+                out.println("</script>");
+            }
+
+        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | SQLException |
+                 ClassNotFoundException err){
             err.printStackTrace();
             out.println("<html><body>");
             out.println("<h3> (500) Unexpected error occurred</h3>");
@@ -105,6 +124,33 @@ public class RegistrationFormServlet extends HttpServlet {
         out.println("</body></html>");
         out.close();
     }
+
+    private boolean checkRegistration(String employeeID, String employeeEmail) throws SQLException, ClassNotFoundException {
+        boolean isRegistered = false;
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection conn = DriverManager.getConnection(
+                    "jdbc:postgresql://db:5432/postgres", "postgres", "postgres");
+
+            PreparedStatement checkSql = conn.prepareStatement(
+                    "select count(*) from users where employee_id = ? or employee_email = ?");
+            checkSql.setString(1, employeeID);
+            checkSql.setString(2, employeeEmail);
+            ResultSet result = checkSql.executeQuery();
+
+            if (result.next()) {
+                int count = result.getInt(1);  // 獲取第一列的計數值
+                isRegistered = (count > 0);
+                System.out.println("Is registered: " + isRegistered);
+            }
+            conn.close();
+        } catch (ClassNotFoundException | SQLException err) {
+            err.printStackTrace();
+            System.out.println(err);
+        }
+        return isRegistered;
+    }
+
 
     private void initializeJDBC() {
         try {
@@ -126,9 +172,9 @@ public class RegistrationFormServlet extends HttpServlet {
 
     private void saveRegistration(String employeeID, String employeeEmail, String employeeName, String hashedPWD, String signature) throws SQLException {
         try {
-            sql.setString(1, employeeID);
+            sql.setString(1, employeeEmail);
             sql.setString(2, employeeName);
-            sql.setString(3, employeeEmail);
+            sql.setString(3, employeeID);
             sql.setString(4, hashedPWD);
             sql.setString(5, signature);
             // Base64 是用來避免密碼在轉換過程中變成亂碼

@@ -38,8 +38,9 @@ git clone <您的專案 Git 儲存庫網址>
 
 2. **啟動服務：**
     - 點擊 "+" 按鈕，選擇 "Docker Compose"。
-    - 選擇您的 `docker-compose.yml` 檔案。
-    - 點擊 "Play" 按鈕啟動服務。
+    - 將終端機指令路徑移至 `docker-compose.yml` 檔案處。
+    - 使用 `docker compose up` 以建立 Docker 環境
+    - 每次要啟動網頁伺服器時，僅需點擊 "Play" 按鈕啟動服務。
 
 ### 4. 執行 PostgreSQL SQL Query Console
 

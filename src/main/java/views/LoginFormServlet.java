@@ -65,7 +65,7 @@ public class LoginFormServlet extends HttpServlet {
                 HttpSession session = req.getSession();
                 session.setAttribute("employeeID", employeeID);
                 session.setMaxInactiveInterval(360 * 60); // 360 minutes
-                res.sendRedirect("/Form.jsp");
+                res.sendRedirect("/forms/Home.jsp");
             } else {
                 // 登入失敗，輸出錯誤訊息
                 out = res.getWriter();

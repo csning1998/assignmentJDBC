@@ -34,13 +34,23 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>RegistrationServlet</servlet-name>
+        <servlet-name>RegistrationFormServlet</servlet-name>
         <servlet-class>views.RegistrationFormServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>RegistrationServlet</servlet-name>
+        <servlet-name>RegistrationFormServlet</servlet-name>
         <url-pattern>/RegistrationForm</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>HomeServlet</servlet-name>
+        <servlet-class>views.HomeServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>HomeServlet</servlet-name>
+        <url-pattern>/Home</url-pattern>
     </servlet-mapping>
 
 </web-app>
