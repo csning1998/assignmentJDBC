@@ -38,9 +38,7 @@
         </div>
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="employee_email" name="employee_email">
-            <label class="mdl-textfield__label" for="employee_email">Enter your email: </label>
-        </div>
+            <input class="mdl-textfield__inp
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input" type="password" id="originalPWD" name="originalPWD">
