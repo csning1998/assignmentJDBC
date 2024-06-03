@@ -4,14 +4,15 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
     <servlet>
-        <servlet-name> TestServlet </servlet-name>
+        <servlet-name>TestServlet</servlet-name>
         <servlet-class>views.GetFormServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name> TestServlet </servlet-name>
+        <servlet-name>TestServlet</servlet-name>
         <url-pattern> /tryme </url-pattern>
     </servlet-mapping>
+
 
     <servlet>
         <servlet-name>GetFormServlet</servlet-name>
@@ -23,6 +24,7 @@
         <url-pattern>/form-get</url-pattern>
     </servlet-mapping>
 
+
     <servlet>
         <servlet-name>LoginFormServlet</servlet-name>
         <servlet-class>views.LoginFormServlet</servlet-class>
@@ -32,6 +34,7 @@
         <servlet-name>LoginFormServlet</servlet-name>
         <url-pattern>/LoginForm</url-pattern>
     </servlet-mapping>
+
 
     <servlet>
         <servlet-name>RegistrationFormServlet</servlet-name>
@@ -43,6 +46,7 @@
         <url-pattern>/RegistrationForm</url-pattern>
     </servlet-mapping>
 
+
     <servlet>
         <servlet-name>HomeServlet</servlet-name>
         <servlet-class>views.HomeServlet</servlet-class>
@@ -51,6 +55,17 @@
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/Home</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>PatientFormServlet</servlet-name>
+        <servlet-class>views.PatientFormServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>PatientFormServlet</servlet-name>
+        <url-pattern>/PatientForm</url-pattern>
     </servlet-mapping>
 
 </web-app>

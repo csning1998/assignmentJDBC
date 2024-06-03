@@ -132,11 +132,11 @@ public class RegistrationFormServlet extends HttpServlet {
             Connection conn = DriverManager.getConnection(
                     "jdbc:postgresql://db:5432/postgres", "postgres", "postgres");
 
-            PreparedStatement checkSql = conn.prepareStatement(
+            PreparedStatement sql = conn.prepareStatement(
                     "select count(*) from users where employee_id = ? or employee_email = ?");
-            checkSql.setString(1, employeeID);
-            checkSql.setString(2, employeeEmail);
-            ResultSet result = checkSql.executeQuery();
+            sql.setString(1, employeeID);
+            sql.setString(2, employeeEmail);
+            ResultSet result = sql.executeQuery();
 
             if (result.next()) {
                 int count = result.getInt(1);  // 獲取第一列的計數值

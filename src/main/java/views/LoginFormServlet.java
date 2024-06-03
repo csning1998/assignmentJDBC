@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.sql.*;
+import java.util.Arrays;
 import java.util.Base64;
 
 public class LoginFormServlet extends HttpServlet {
@@ -56,47 +57,61 @@ public class LoginFormServlet extends HttpServlet {
         String originalPWD = req.getParameter("originalPWD");
 
         // Bring 'PrintWriter' out of scope of try catch as a global var of try-catch.
-        PrintWriter out = null;
+        PrintWriter out = res.getWriter();
         try {
             boolean isLoginSuccessful = checkLogin(employeeID, originalPWD);
 
             if (isLoginSuccessful) {
-                // 登入成功，重定向到 Form.jsp
+                // Set up the session
                 HttpSession session = req.getSession();
                 session.setAttribute("employeeID", employeeID);
-                session.setMaxInactiveInterval(360 * 60); // 360 minutes
-                res.sendRedirect("/forms/Home.jsp");
+                session.setMaxInactiveInterval(360 * 60);
+
+                // Implement JavaScript's alert('') function.
+                // The IDE suggests using String.join(Arrays.asList()) method.
+                // and then refer to the line below of using JavaScript in this case.
+                // Ref: https://www.sitepoint.com/community/t/servlet-and-javascript/75233
+                out.println(String.join("\n", Arrays.asList(
+                        "<script>",
+                        "window.onload = function() {",
+                        "    alert('Login Successful');",
+                        "    setTimeout(function() {",
+                        "        window.location.href = '/forms/Home.jsp';",
+                        "    }, 500);",
+                        "}",
+                        "</script>")
+                ));
             } else {
-                // 登入失敗，輸出錯誤訊息
-                out = res.getWriter();
-                out.println("<!DOCTYPE html>");
-                out.println("<html><head><title>Login Failed</title></head><body>");
-                out.println("<h1>Login Failed!</h1>");
-                out.println("<p>Invalid employee ID or password.</p>");
-                out.println("</body></html>");
+                // Login Error
+                out.print(String.join("\n", Arrays.asList(
+                        "<script>",
+                        "window.onload = function() {",
+                        "    alert('Invalid username / password. \n You may recheck your username and password.');",
+                        "    setTimeout(function() {",
+                        "        window.location.href = '/forms/LoginFrom.jsp';",
+                        "    }, 500);",
+                        "}",
+                        "</script>")
+                ));
             }
 
-//            out = res.getWriter();
-//            out.println("<!DOCTYPE html>");
-//            out.println("<html><head><title>Login Form</title></head><body>");
-//            out.println("<h1>Login Form</h1>");
-//            out.println("<p>employee_id: " + employeeID + "</p>");
-//            out.println("<p>originalPWD: " + originalPWD + "</p>");
-//            out.println("<p>Hashed Password: " + hashedPWD + "</p>");
-//            out.println("<p>Signature: " + Base64.getEncoder().encodeToString(signature) + "</p>");
-//            out.println("</body></html>");
-
         } catch (SQLException | ClassNotFoundException e) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html><head><title>Login Failed</title></head><body>");
-            out.println("<h1>An error occurred during login</h1>");
-            out.println("</body></html>");
-            e.printStackTrace(out);
+            out.print(String.join("\n", Arrays.asList(
+                    "<script>",
+                    "window.onload = function() {",
+                    "    alert('(500 Unexpected error occurred).');",
+                    "    setTimeout(function() {",
+                    "        window.location.href = '/forms/LoginFrom.jsp';",
+                    "    }, 500);",
+                    "}",
+                    "</script>")
+            ));
         }
     }
 
+    // IDEA Suggests adding @SuppressWarning:
     @SuppressWarnings("ThrowablePrintedToSystemOut")
-    public Boolean checkLogin(String employeeID, String originalPWD) throws SQLException, ClassNotFoundException {
+    private Boolean checkLogin(String employeeID, String originalPWD) throws SQLException, ClassNotFoundException {
 
         boolean isLoginSuccessful = false;
 
