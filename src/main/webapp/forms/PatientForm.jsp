@@ -14,24 +14,35 @@
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
     <style>
+        body {
+            font-family: Roboto, sans-serif;
+        }
         .mdl-textfield {
             width: 100%;
             margin-bottom: 16px;
         }
         .form-container {
             max-width: 600px;
-            margin: 50px auto;
+            margin: 20px auto;
             padding: 20px;
-            border: 1px solid #eee;
-            box-sizing: border-box;
+            border-radius: 5px;
+            box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),
+                0 3px 1px -2px rgba(0,0,0,.12), 0 1px 5px 0 rgba(0,0,0,.2);
         }
-        .full-width {
+        h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .mdl-textfield {
             width: 100%;
+            margin-bottom: 16px;
         }
-
         .mdl-textfield__label {
             top: -12px;
             font-size: 12px;
+        }
+        .full-width {
+            width: 100%;
         }
         .mdl-textfield.is-dirty .mdl-textfield__label {
             top: -24px;
@@ -41,7 +52,8 @@
 </head>
 <body>
 <div class="form-container">
-    <h3>Clinical Medical Record System</h3>
+    <h3 class="mdl-typography--title">Clinical Medical Record System</h3>
+
     <form action="/PatientForm" method="post">
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width">
             <input class="mdl-textfield__input" type="text" id="patientName" name="patientName" required>
@@ -54,8 +66,9 @@
         </div>
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width">
-            <input class="mdl-textfield__input" type="date" id="birthdate" name="birthdate" required>
+            <input class="mdl-textfield__input" type="date" id="birthdate" name="birthdate" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
             <label class="mdl-textfield__label" for="birthdate">Birthdate (yyyy/mm/dd)</label>
+            <span class="mdl-textfield__error">Invalid date format</span>
         </div>
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width">
@@ -88,8 +101,9 @@
         </div>
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width">
-            <input class="mdl-textfield__input" type="date" id="firstVisitDate" name="firstVisitDate" required>
-            <label class="mdl-textfield__label" for="firstVisitDate">First Diagnosis Date</label>
+            <input class="mdl-textfield__input" type="date" id="firstVisitDate" name="firstVisitDate" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
+            <label class="mdl-textfield__label" for="firstVisitDate">First Diagnosis Date (yyyy-mm-dd)</label>
+            <span class="mdl-textfield__error">Invalid date format</span>
         </div>
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width">

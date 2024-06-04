@@ -70,7 +70,7 @@
 
     <servlet>
         <servlet-name>PatientSummaryServlet</servlet-name>
-        <servlet-class>views.PatientFormServlet</servlet-class>
+        <servlet-class>views.PatientSummaryServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
