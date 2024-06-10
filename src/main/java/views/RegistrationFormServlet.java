@@ -65,9 +65,15 @@ public class RegistrationFormServlet extends HttpServlet {
 
         // Check if the password are matched, return if it's failed.
         if (!originalPWD.equals(confirmPWD)){
-            out.println("<html><body>");
-            out.println("<h3> Password is not matched!</h3>");
-            out.println("<body></html>");
+            Arrays.asList("<script>",
+                    "window.onload = function() {",
+                    "  alert('Passwords are not matched !');",
+                    "  setTimeout(function() {",
+                    "    window.location.href = '/forms/LoginForm.jsp';",
+                    "  }, 200); // 5 second delay",
+                    "};",
+                    "</script>"
+            ).forEach(out::println);
             return;
         }
         try{
@@ -88,7 +94,8 @@ public class RegistrationFormServlet extends HttpServlet {
                         "    window.location.href = '/forms/LoginForm.jsp';",
                         "  }, 200); // 5 second delay",
                         "};",
-                        "</script>").forEach(out::println);
+                        "</script>"
+                ).forEach(out::println);
             } else
                 Arrays.asList(
                         "<script>",
@@ -127,7 +134,7 @@ public class RegistrationFormServlet extends HttpServlet {
             ResultSet result = sql.executeQuery();
 
             if (result.next()) {
-                int count = result.getInt(1);  // 獲取第一列的計數值
+                int count = result.getInt(1);
                 isRegistered = (count > 0);
                 System.out.println("Is registered: " + isRegistered);
             }
@@ -165,7 +172,6 @@ public class RegistrationFormServlet extends HttpServlet {
             sql.setString(3, employeeID);
             sql.setString(4, hashedPWD);
             sql.setString(5, signature);
-            // Base64 是用來避免密碼在轉換過程中變成亂碼
             sql.executeUpdate();
         } catch (SQLException err) {
              err.printStackTrace();

@@ -17,9 +17,8 @@ public class HomeServlet extends HttpServlet {
 
         // Check if the employeeID exists in the session
         HttpSession session = req.getSession(false);
-        String employeeID = (String) session.getAttribute("employeeID");
 
-        if (employeeID != null) {
+        if (session != null && session.getAttribute("employeeID") != null) {
             // Logged in
             req.getRequestDispatcher("/forms/Home.jsp").forward(req, res);
         } else {

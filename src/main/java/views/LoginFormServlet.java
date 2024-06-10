@@ -19,6 +19,7 @@ public class LoginFormServlet extends HttpServlet {
 
     static {
         try {
+            // Generate RSA keypair for future session authentication (not yet implemented)
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
             keyPairGenerator.initialize(KEY_SIZE);
             keyPair = keyPairGenerator.generateKeyPair();
@@ -64,28 +65,30 @@ public class LoginFormServlet extends HttpServlet {
                 out.println("<script>");
                 Arrays.asList(
                         "  alert('Login Successful');",
-                        "  window.location.href = '/forms/Home.jsp';").forEach(out::println);
+                        "  window.location.href = '/forms/Home.jsp';"
+                ).forEach(out::println);
             } else {
                 // Login Error
                 out.println("<script>");
                 // Correct the form name
                 Arrays.asList(
-                        "  alert('Invalid username / password. \\n You may recheck your username and password.');",
-                        "  window.location.href = '/forms/LoginForm.jsp';").forEach(out::println);
+                        "  alert('Invalid username / password. \n You may recheck your username and password.');",
+                        "  window.location.href = '/forms/LoginForm.jsp';"
+                ).forEach(out::println);
             }
             out.println("</script>");
 
         } catch (SQLException | ClassNotFoundException e) {
-            out.print(String.join("\n", Arrays.asList(
-                    "<script>",
+            out.println("<script>");
+            Arrays.asList(
                     "window.onload = function() {",
                     "    alert('(500 Unexpected error occurred).');",
                     "    setTimeout(function() {",
                     "        window.location.href = '/forms/LoginFrom.jsp';",
                     "    }, 500);",
                     "}",
-                    "</script>")
-            ));
+                    "</script>"
+            ).forEach(out::println);
         }
     }
 
@@ -113,7 +116,6 @@ public class LoginFormServlet extends HttpServlet {
             System.out.println("Result: " + result.toString());
 
             if (result.next()) {
-                // user.setFullname(result.getString("originalPWD"));
                 isLoginSuccessful = true;
                 System.out.println("Login Check: " + isLoginSuccessful);
             }

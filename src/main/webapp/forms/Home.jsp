@@ -33,16 +33,15 @@
         <div class="mdl-layout__header-row">
             <span class="mdl-layout-title">Clinical Medical Record Query System</span>
             <div class="mdl-layout-spacer"></div>
-            <% String employeeID = (String) session.getAttribute("employeeID"); %>
-            <% if (employeeID != null) { %>
-            <span>Welcome, <%= employeeID %>!</span>
-<%--            <a href="/forms/LogoutServlet">--%>
-<%--                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">--%>
-<%--                    Logout--%>
-<%--                </button>--%>
-<%--            </a>--%>
-            <% } %>
-        </div>
+                <% String employeeID = (String) session.getAttribute("employeeID"); %>
+                <% if (employeeID != null) { %>
+                   Welcome, <%= employeeID %>!
+                <a href="/LogoutServlet">
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                        Logout
+                    </button>
+                </a>
+                <% } %>
     </header>
     <main class="mdl-layout__content">
         <div class="button-container">
