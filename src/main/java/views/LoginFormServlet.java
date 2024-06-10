@@ -14,7 +14,6 @@ import java.util.Base64;
 
 public class LoginFormServlet extends HttpServlet {
 
-    private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
     private static final int KEY_SIZE = 2048; // Use a stronger key size
     private static KeyPair keyPair;
 
@@ -24,7 +23,6 @@ public class LoginFormServlet extends HttpServlet {
             keyPairGenerator.initialize(KEY_SIZE);
             keyPair = keyPairGenerator.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
-            // 處理異常，例如紀錄錯誤日誌
             e.printStackTrace();
         }
     }
@@ -40,14 +38,6 @@ public class LoginFormServlet extends HttpServlet {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hashedBytes = digest.digest(password.getBytes(StandardCharsets.UTF_8));
         return Base64.getEncoder().encodeToString(hashedBytes); // Encode to Base64 for easier storage
-    }
-
-    // Encryption -> Sign the hash
-    private byte[] signHash(byte[] hashedPassword) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException {
-        Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
-        signature.initSign(keyPair.getPrivate());
-        signature.update(hashedPassword);
-        return signature.sign();
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
@@ -71,29 +61,19 @@ public class LoginFormServlet extends HttpServlet {
                 // The IDE suggests using String.join(Arrays.asList()) method.
                 // and then refer to the line below of using JavaScript in this case.
                 // Ref: https://www.sitepoint.com/community/t/servlet-and-javascript/75233
-                out.println(String.join("\n", Arrays.asList(
-                        "<script>",
-                        "window.onload = function() {",
-                        "    alert('Login Successful');",
-                        "    setTimeout(function() {",
-                        "        window.location.href = '/forms/Home.jsp';",
-                        "    }, 500);",
-                        "}",
-                        "</script>")
-                ));
+                out.println("<script>");
+                Arrays.asList(
+                        "  alert('Login Successful');",
+                        "  window.location.href = '/forms/Home.jsp';").forEach(out::println);
             } else {
                 // Login Error
-                out.print(String.join("\n", Arrays.asList(
-                        "<script>",
-                        "window.onload = function() {",
-                        "    alert('Invalid username / password. \n You may recheck your username and password.');",
-                        "    setTimeout(function() {",
-                        "        window.location.href = '/forms/LoginFrom.jsp';",
-                        "    }, 500);",
-                        "}",
-                        "</script>")
-                ));
+                out.println("<script>");
+                // Correct the form name
+                Arrays.asList(
+                        "  alert('Invalid username / password. \\n You may recheck your username and password.');",
+                        "  window.location.href = '/forms/LoginForm.jsp';").forEach(out::println);
             }
+            out.println("</script>");
 
         } catch (SQLException | ClassNotFoundException e) {
             out.print(String.join("\n", Arrays.asList(

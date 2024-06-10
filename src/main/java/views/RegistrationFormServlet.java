@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.sql.*;
+import java.util.Arrays;
 import java.util.Base64;
 
 @WebServlet(name = "RegistrationFormServlet", value = "/RegistrationFormServlet")
@@ -36,12 +37,6 @@ public class RegistrationFormServlet extends HttpServlet {
             keyPairGenerator.initialize(KEY_SIZE);
             keyPair = keyPairGenerator.generateKeyPair();
         }
-    }
-
-    public RegistrationFormServlet() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(KEY_SIZE);
-        keyPair = keyPairGenerator.generateKeyPair();
     }
 
     private String hashPassword(String password) throws NoSuchAlgorithmException {
@@ -80,48 +75,41 @@ public class RegistrationFormServlet extends HttpServlet {
             byte[] signature = signHash(hashedPWD.getBytes(StandardCharsets.UTF_8));
 
             // Follow the correction instructions given by Intellij IDEA.
+            // Handle cases where registration already exists
             if (!checkRegistration(employeeID, employeeEmail)) {
                 // Not Registered.
                 saveRegistration(employeeID, employeeEmail, employeeName, hashedPWD, Base64.getEncoder().encodeToString(signature));
 
                 // JavaScript Console.log
-                out.println("<script>");
-                out.println("window.onload = function() {");
-                out.println("    alert('Registration Successful');");
-                out.println("    setTimeout(function() {");
-                out.println("        window.location.href = '/forms/LoginForm.jsp';");
-                out.println("    }, 1000); // 1000 milliseconds = 0.5 second");
-                out.println("}");
-                out.println("</script>");
-                } else {
-                out.println("<script>");
-                out.println("window.onload = function() {");
-                out.println("    alert('This Account has been registered before.');");
-                out.println("    setTimeout(function() {");
-                out.println("        window.location.href = '/forms/RegistrationForm.jsp';");
-                out.println("    }, 1000); // 1000 milliseconds = 1 second");
-                out.println("}");
-                out.println("</script>");
-            }
+                Arrays.asList("<script>",
+                        "window.onload = function() {",
+                        "  alert('Registration Successful');",
+                        "  setTimeout(function() {",
+                        "    window.location.href = '/forms/LoginForm.jsp';",
+                        "  }, 200); // 5 second delay",
+                        "};",
+                        "</script>").forEach(out::println);
+            } else
+                Arrays.asList(
+                        "<script>",
+                        "window.onload = function() {",
+                        "  alert('This account has been registered before.');",
+                        "  setTimeout(function() {",
+                        "    window.location.href = '/forms/RegistrationForm.jsp';",
+                        "  }, 200); // 5 second delay",
+                        "};",
+                        "</script>").forEach(out::println);
 
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | SQLException |
                  ClassNotFoundException err){
             err.printStackTrace();
-            out.println("<html><body>");
-            out.println("<h3> (500) Unexpected error occurred</h3>");
-            out.println("<body></html>");
+            // Handle exceptions properly, e.g., log the error.
+            Arrays.asList(
+                    // Handle exceptions properly, e.g., log the error.
+                    "<html><body>",
+                    "<h3> (500) Unexpected error occurred</h3>",
+                    "<body></html>").forEach(out::println);
         }
-
-
-        out.println("<!DOCTYPE html>");
-        out.println("<html><head><title>Registration Form</title></head><body>");
-        out.println("<h1>Registration Form</h1>");
-        out.println("<h3> Your 身份證 / ARC ID: " + employeeID + "</h3>");
-        out.println("<h3> Your email: " + employeeEmail + "</h3>");
-        out.println("<h3> Your name: " + employeeName + "</h3>");
-        out.println("<h3> Your password: " + originalPWD + "</h3>");
-        out.println("<h3> Your Confirm password: " + confirmPWD + "</h3>");
-        out.println("</body></html>");
         out.close();
     }
 

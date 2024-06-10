@@ -5,8 +5,6 @@
         <title>JSP - Hello World</title>
     </head>
     <body>
-        <h1><%= "Hello World!" %></h1>
-        <br/>
-        <a href="tryme">Hello Servlet</a>
-    </body>
+    <% response.sendRedirect("/forms/LoginForm.jsp");%>
+</body>
 </html>

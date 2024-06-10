@@ -49,7 +49,7 @@ public class PatientSummaryServlet extends HttpServlet {
         out.println("<tr><td>First Diagnosis Date</td><td>" + firstVisitDate + "</td></tr>");
         out.println("<tr><td>Patient History</td><td>" + personalHistory + "</td></tr>");
         out.println("<tr><td>Family History</td><td>" + familyHistory + "</td></tr>");
-        out.println("<tr><td>Diagnosis History</td><td>" + medicalRecord + "</td></tr>");
+        out.println("<tr><td>Diagcnosis History</td><td>" + medicalRecord + "</td></tr>");
         out.println("</table>");
         out.println("</body></html>");
     }
